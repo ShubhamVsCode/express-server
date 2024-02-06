@@ -7,7 +7,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/check", (req, res) => {
-  res.json({ msg: "hello from server with deployment" });
+  res.json({ msg: "hello from server with deployment..." });
 });
 
 app.get("/health", (req, res) => {
