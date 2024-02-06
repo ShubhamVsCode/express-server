@@ -56,7 +56,9 @@ jobs:
               # Install project dependencies
               npm install &&
               
-              # Reload the Node.js application using PM2 (hot reload)
+              # Stop the Node.js application using PM2
               sudo pm2 stop NODE_SERVER || true &&
+              
+              # Start the Node.js application using PM2
               sudo pm2 start index.js --name=NODE_SERVER
               '
