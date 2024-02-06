@@ -49,6 +49,6 @@ jobs:
               git reset --hard origin/main &&
               git pull origin main &&
               sudo npm i &&
-              sudo pm2 stop index.js &&
-              sudo pm2 start index.js
+              sudo pm2 stop all &&
+              sudo pm2 start index.js --name=NODE_SERVER
               '
