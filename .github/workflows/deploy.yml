@@ -34,11 +34,20 @@ jobs:
     steps:
       - name: Deploy to EC2
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOSTNAME: ${{secrets.SSH_HOST}}
+          USER_NAME: ${{secrets.USER_NAME}}
         run: |
-          echo "$SSH_PRIVATE_KEY" > keyfile
-          chmod 600 keyfile
-          mkdir -p ~/.ssh
-          cp known_hosts ~/.ssh/known_hosts
-          ssh -t -i keyfile "$EC2_HOST" "sudo bash ~/deploy.sh"
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /app &&
+              git checkout main &&
+              git fetch --all &&
+              git reset --hard origin/main &&
+              git pull origin main &&
+              sudo npm i &&
+              sudo pm2 stop index.js &&
+              sudo pm2 start index.js
+              '
