@@ -57,6 +57,6 @@ jobs:
               npm install &&
               
               # Reload the Node.js application using PM2 (hot reload)
-              sudo pm2 stop index.js &&
-              sudo pm2 start index.js --name="NODE_SERVER"
+              sudo pm2 stop NODE_SERVER || true &&
+              sudo pm2 start index.js --name=NODE_SERVER
               '
