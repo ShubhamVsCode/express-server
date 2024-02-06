@@ -3,11 +3,10 @@ name: Node.js CI/CD
 on:
   push:
     branches: ["main"]
-  # pull_request:
-  #   branches: ["main"]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     strategy:
@@ -15,7 +14,9 @@ jobs:
         node-version: [18.x]
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -29,26 +30,32 @@ jobs:
         run: npm run build --if-present
 
   deploy:
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to EC2
         env:
           PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{secrets.SSH_HOST}}
-          USER_NAME: ${{secrets.USER_NAME}}
+          HOSTNAME: ${{ secrets.SSH_HOST }}
+          USER_NAME: ${{ secrets.USER_NAME }}
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
 
-              # Now we have got the access of EC2 and we will start the deploy .
-              ls -la &&
+          # SSH into the EC2 instance and perform deployment steps
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              # Navigate to the application directory
               cd app &&
+              
+              # Reset the codebase to the latest from the main branch
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
               git pull origin main &&
-              sudo npm i &&
-              sudo pm2 stop NODE_SERVER &&
-              sudo pm2 start index.js --name=NODE_SERVER
+              
+              # Install project dependencies
+              npm install &&
+              
+              # Reload the Node.js application using PM2 (hot reload)
+              pm2 reload index.js
               '
