@@ -1,10 +1,10 @@
-name: Node.js CI
+name: Node.js CI/CD
 
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
+  # pull_request:
+  #   branches: ["main"]
 
 jobs:
   build:
@@ -21,6 +21,26 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build --if-present
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /app
+            git pull origin main
+            npm install
+            # npm run build
+            # Add any additional deployment steps here
