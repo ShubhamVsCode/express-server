@@ -43,7 +43,7 @@ jobs:
 
               # Now we have got the access of EC2 and we will start the deploy .
               ls -la &&
-              cd /app &&
+              cd app &&
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
