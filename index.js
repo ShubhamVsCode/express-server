@@ -6,9 +6,7 @@ app.get("/", (req, res) => {
   res.json({ msg: "hello world" });
 });
 
-app.get("/check", (req, res) => {
-  res.json({ msg: "hello from server with deployment..." });
-});
+app.use("/todos", require("./routes/todo-route"));
 
 app.get("/health", (req, res) => {
   res.json({ msg: "Up and running..." });
