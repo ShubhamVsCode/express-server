@@ -22,6 +22,7 @@ const createTodo = async (req, res) => {
     const savedTodo = await newTodo.save();
     res.status(201).json(savedTodo);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
