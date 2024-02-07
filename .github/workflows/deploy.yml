@@ -57,8 +57,8 @@ jobs:
               npm install &&
               
               # Stop the Node.js application using PM2
-              sudo pm2 stop NODE_SERVER || true &&
-              
+              sudo pm2 kill &&
+
               # Start the Node.js application using PM2
               sudo pm2 start index.js --name=NODE_SERVER
               '
